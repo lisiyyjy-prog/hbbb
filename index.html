@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>蓝色无限标签</title>
+<style>
+    body {
+        margin: 0;
+        overflow: hidden;
+        background: radial-gradient(circle at center, #001f3f, #000814);
+        position: relative;
+        height: 100vh;
+    }
+
+    /* 开场提示框 */
+    #startTip {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #7ec8ff;
+        color: #003355;
+        padding: 20px;
+        border-radius: 18px;
+        width: 80%;
+        max-width: 360px;
+        text-align: center;
+        font-size: 28px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        z-index: 9999;
+    }
+
+    #closeBtn {
+        position: absolute;
+        top: 5px;
+        right: 15px;
+        font-size: 32px;
+        cursor: pointer;
+        color: #003355;
+        touch-action: manipulation;
+    }
+
+    /* 蓝色标签 —— 12种蓝色 */
+    .tag {
+        position: absolute;
+        padding: 12px 20px;
+        border-radius: 10px;
+        font-size: 24px;
+        font-weight: bold;
+        color: white;
+        opacity: 0;
+        animation: fadeMove 5s linear forwards;
+        box-shadow: 0 0 10px rgba(255,255,255,0.4);
+        max-width: 220px;
+        word-wrap: break-word;
+        text-align: center;
+        line-height: 1.3;
+    }
+
+    /* 12种蓝色 */
+    .c1 { background: #1E90FF; }
+    .c2 { background: #00A8E8; }
+    .c3 { background: #0096FF; }
+    .c4 { background: #1B3B6F; }
+    .c5 { background: #145DA0; }
+    .c6 { background: #2E8BC0; }
+    .c7 { background: #3A6EA5; }
+    .c8 { background: #0A81D1; }
+    .c9 { background: #4F8FBF; }
+    .c10 { background: #5DA9E9; }
+    .c11 { background: #0077B6; }
+    .c12 { background: #1B98E0; }
+
+    /* 标签动画 */
+    @keyframes fadeMove {
+        0% { opacity: 0; transform: translateY(20px); }
+        10% { opacity: 1; }
+        90% { opacity: 1; }
+        100% { opacity: 0; transform: translateY(-40px); }
+    }
+
+    /* 小星星 */
+    .star {
+        position: absolute;
+        width: 3px;
+        height: 3px;
+        background: white;
+        border-radius: 50%;
+        opacity: 0.8;
+        animation: twinkle 2s infinite ease-in-out;
+    }
+    
+    @keyframes twinkle {
+        0%, 100% { opacity: 0.2; }
+        50% { opacity: 1; }
+    }
+
+    /* 响应式调整 */
+    @media (max-width: 480px) {
+        .tag {
+            font-size: 22px;
+            padding: 10px 18px;
+            max-width: 180px;
+        }
+        
+        #startTip {
+            font-size: 26px;
+            padding: 25px 20px;
+        }
+        
+        #closeBtn {
+            font-size: 30px;
+        }
+    }
+</style>
+</head>
+<body>
+
+<!-- 开场提示框 -->
+<div id="startTip">
+    <div id="closeBtn">✕</div>
+    Happy Birthday！
+</div>
+
+<script>
+// 全局变量
+let isRunning = false;
+let tagInterval = null;
+
+// 页面加载完成后执行
+window.onload = function() {
+    console.log('页面加载完成');
+    
+    // 生成星星背景
+    createStars();
+    
+    // 绑定关闭按钮事件
+    document.getElementById('closeBtn').onclick = function() {
+        console.log('关闭按钮被点击');
+        startAnimation();
+    };
+    
+    // 为移动设备添加触摸支持
+    document.getElementById('closeBtn').addEventListener('touchstart', function(e) {
+        e.preventDefault();
+        console.log('关闭按钮被触摸');
+        startAnimation();
+    });
+};
+
+// 生成星星背景
+function createStars() {
+    for (let i = 0; i < 120; i++) {
+        let star = document.createElement('div');
+        star.className = 'star';
+        star.style.left = Math.random() * 100 + 'vw';
+        star.style.top = Math.random() * 100 + 'vh';
+        star.style.animationDelay = Math.random() * 3 + 's';
+        document.body.appendChild(star);
+    }
+}
+
+// 标签内容
+const tagTexts = [
+    '轻舟快船，祝你好过春山',
+    '恭喜你，离成熟又远了一步',
+    '㊗️你：吃好，喝好，长生不老',
+    '胃和心，一样满',
+    '滴！按时长大卡',
+    '嘿！寿星！',
+    '要更爱自己一点',
+    '不说别的，你值得所有的好',
+    '新地图已开启，祝你玩得开心！',
+    '生日快乐，愿你想要的都得到',
+    '你今天比迪士尼在逃公主还快乐！',
+    '从此烦恼清零，快乐满分！',
+    '愿你走路都能捡到钱',
+    '生日快乐，今晚不醉不归',
+    '许愿被刷屏，浪漫又自由'
+];
+
+// 开始动画
+function startAnimation() {
+    if (isRunning) return;
+    isRunning = true;
+    
+    // 隐藏提示框
+    const startTip = document.getElementById('startTip');
+    if (startTip) {
+        startTip.style.display = 'none';
+    }
+    
+    console.log('开始生成标签');
+    
+    // 立即生成一批标签
+    for (let i = 0; i < 15; i++) {
+        setTimeout(createTag, i * 150);
+    }
+    
+    // 持续生成标签（不间断）
+    tagInterval = setInterval(createTag, 80);
+}
+
+// 创建单个标签
+function createTag() {
+    if (!isRunning) return;
+    
+    // 创建标签元素
+    let tag = document.createElement('div');
+    tag.className = 'tag c' + (Math.floor(Math.random() * 12) + 1);
+    tag.textContent = tagTexts[Math.floor(Math.random() * tagTexts.length)];
+    
+    // 随机位置
+    const tagWidth = 180;
+    const tagHeight = 60;
+    const posX = Math.random() * (window.innerWidth - tagWidth - 40) + 20;
+    const posY = Math.random() * (window.innerHeight - tagHeight - 100) + 50;
+    
+    tag.style.left = posX + 'px';
+    tag.style.top = posY + 'px';
+    
+    // 添加到页面
+    document.body.appendChild(tag);
+    
+    // 5秒后移除
+    setTimeout(function() {
+        if (document.body.contains(tag)) {
+            document.body.removeChild(tag);
+        }
+    }, 5000);
+}
+
+// 防止页面滚动
+document.addEventListener('touchmove', function(e) {
+    e.preventDefault();
+}, { passive: false });
+</script>
+
+</body>
+</html>
